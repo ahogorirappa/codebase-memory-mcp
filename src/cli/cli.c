@@ -3522,8 +3522,10 @@ static void install_editor_agent_configs(const cbm_detected_agents_t *agents, co
     }
     if (agents->openclaw) {
         char cp[CLI_BUF_1K];
+        char ip[CLI_BUF_1K];
         snprintf(cp, sizeof(cp), "%s/.openclaw/openclaw.json", home);
-        install_generic_agent_config("OpenClaw", binary_path, cp, NULL, dry_run,
+        snprintf(ip, sizeof(ip), "%s/.openclaw/rules/codebase-memory-mcp.md", home);
+        install_generic_agent_config("OpenClaw", binary_path, cp, ip, dry_run,
                                      cbm_install_openclaw_mcp);
     }
     if (agents->kiro) {
@@ -4063,8 +4065,10 @@ static void uninstall_editor_agents(const cbm_detected_agents_t *agents, const c
     }
     if (agents->openclaw) {
         char cp[CLI_BUF_1K];
+        char ip[CLI_BUF_1K];
         snprintf(cp, sizeof(cp), "%s/.openclaw/openclaw.json", home);
-        uninstall_agent_mcp_instr((mcp_uninstall_args_t){"OpenClaw", cp, NULL}, dry_run,
+        snprintf(ip, sizeof(ip), "%s/.openclaw/rules/codebase-memory-mcp.md", home);
+        uninstall_agent_mcp_instr((mcp_uninstall_args_t){"OpenClaw", cp, ip}, dry_run,
                                   cbm_remove_openclaw_mcp);
     }
     if (agents->kiro) {

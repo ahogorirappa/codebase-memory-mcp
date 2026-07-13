@@ -376,7 +376,7 @@ Restart your agent. Verify with `/mcp` — you should see `codebase-memory-mcp` 
 | Aider | — | `CONVENTIONS.md` | — |
 | KiloCode | `mcp_settings.json` | `~/.kilocode/rules/` | — |
 | VS Code | `Code/User/mcp.json` | — | — |
-| OpenClaw | `openclaw.json` | — | — |
+| OpenClaw | `openclaw.json` | `~/.openclaw/rules/codebase-memory-mcp.md` | — |
 | Kiro | `.kiro/settings/mcp.json` | — | — |
 
 **Hooks are structurally non-blocking** (exit code 0, every failure path).

@@ -838,6 +838,40 @@ TEST(cli_openclaw_mcp_uninstall_uses_nested_servers) {
     PASS();
 }
 
+/* OpenClaw now also receives the shared knowledge-graph (GraphRAG)
+ * instructions file under ~/.openclaw/rules/, mirroring the install-time
+ * wiring in install_editor_agent_configs(). Verify the guidance lands in a
+ * marker-wrapped section and can be cleanly removed on uninstall. */
+TEST(cli_openclaw_instructions_graph_rag) {
+    char tmpdir[256];
+    snprintf(tmpdir, sizeof(tmpdir), "/tmp/cli-openclaw-instr-XXXXXX");
+    if (!cbm_mkdtemp(tmpdir))
+        FAIL("cbm_mkdtemp failed");
+
+    /* Path matches ~/.openclaw/rules/codebase-memory-mcp.md; the rules/
+     * directory does not exist yet, so this also exercises parent creation. */
+    char instrpath[512];
+    snprintf(instrpath, sizeof(instrpath), "%s/.openclaw/rules/codebase-memory-mcp.md", tmpdir);
+
+    int rc = cbm_upsert_instructions(instrpath, cbm_get_agent_instructions());
+    ASSERT_EQ(rc, 0);
+
+    const char *data = read_test_file(instrpath);
+    ASSERT_NOT_NULL(data);
+    ASSERT(strstr(data, "<!-- codebase-memory-mcp:start -->") != NULL);
+    ASSERT(strstr(data, "Codebase Knowledge Graph") != NULL);
+    ASSERT(strstr(data, "search_graph") != NULL);
+    ASSERT(strstr(data, "trace_path") != NULL);
+
+    ASSERT_EQ(cbm_remove_instructions(instrpath), 0);
+    data = read_test_file(instrpath);
+    ASSERT_NOT_NULL(data);
+    ASSERT(strstr(data, "codebase-memory-mcp") == NULL);
+
+    test_rmdir_r(tmpdir);
+    PASS();
+}
+
 /* ═══════════════════════════════════════════════════════════════════
  *  VS Code MCP config tests
  * ═══════════════════════════════════════════════════════════════════ */
@@ -3099,6 +3133,7 @@ SUITE(cli) {
     RUN_TEST(cli_openclaw_mcp_install_uses_nested_servers);
     RUN_TEST(cli_openclaw_mcp_preserves_existing_config);
     RUN_TEST(cli_openclaw_mcp_uninstall_uses_nested_servers);
+    RUN_TEST(cli_openclaw_instructions_graph_rag);
 
     /* VS Code MCP (2 tests — install_test.go) */
     RUN_TEST(cli_vscode_mcp_install);
