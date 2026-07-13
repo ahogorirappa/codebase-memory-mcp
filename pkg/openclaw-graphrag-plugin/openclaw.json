@@ -1,0 +1,11 @@
+{
+  "mcp": {
+    "servers": {
+      "codebase-memory-mcp": {
+        "enabled": true,
+        "command": "/usr/local/bin/codebase-memory-mcp",
+        "args": []
+      }
+    }
+  }
+}
